@@ -21,16 +21,24 @@ router.get('/:id', (req, res) => {
     User.findOne({
         include: [
             {
-              model: Post,
-              attributes: ['id', 'title', 'post_url', 'created_at']
+                model: Post,
+                attributes: ['id', 'title', 'post_url', 'created_at']
             },
             {
-              model: Post,
-              attributes: ['title'],
-              through: Vote,
-              as: 'voted_posts'
+                model: Comment,
+                attributes: ['id', 'comment_text', 'created_at'],
+                include: {
+                    model: Post,
+                    attributes: ['title']
+                }
+            },
+            {
+                model: Post,
+                attributes: ['title'],
+                through: Vote,
+                as: 'voted_posts'
             }
-          ],
+        ],
         attributes: { exclude: ['password'] },
         where: {
             id: req.params.id
@@ -69,12 +77,12 @@ router.post('/', (req, res) => {
 router.post('/login', (req, res) => {
     User.findOne({
         where: {
-          email: req.body.email
+            email: req.body.email
         }
-      }).then(dbUserData => {
+    }).then(dbUserData => {
         if (!dbUserData) {
-          res.status(400).json({ message: 'No user with that email address!' });
-          return;
+            res.status(400).json({ message: 'No user with that email address!' });
+            return;
         }
 
         const validPassword = dbUserData.checkPassword(req.body.password);
@@ -82,15 +90,15 @@ router.post('/login', (req, res) => {
         if (!validPassword) {
             res.status(400).json({ message: 'Incorrect password!' });
             return;
-          }
-      
-          res.json({ user: dbUserData, message: 'You are now logged in!' });
-    
-      });  
-    
-  
-  })
-  
+        }
+
+        res.json({ user: dbUserData, message: 'You are now logged in!' });
+
+    });
+
+
+})
+
 
 // PUT /api/users/1
 router.put('/:id', (req, res) => {
