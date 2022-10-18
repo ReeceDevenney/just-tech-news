@@ -2,6 +2,7 @@ const User = require('./User');
 const Post = require("./Post");
 const Vote = require('./Vote');
 const Comment = require('./Comment');
+const Follower = require('./Follower')
 
 // 1 to many
 User.hasMany(Post, {
@@ -54,6 +55,34 @@ User.hasMany(Comment, {
 
 Post.hasMany(Comment, {
     foreignKey: 'post_id'
+})
+
+User.belongsToMany(User, {
+    through: Follower,
+    as: 'Followers',
+    foreignKey: 'follower_id'
+})
+
+User.belongsToMany(User, {
+    through: Follower,
+    as: 'Followed',
+    foreignKey: 'followed_id'
+})
+
+Follower.belongsTo(User, {
+    foreignKey: 'follower_id'
+})
+
+Follower.belongsTo(User, {
+    foreignKey: 'followed_id'
+})
+
+User.hasMany(Follower, {
+    foreignKey: 'follower_id'
+})
+
+User.hasMany(Follower, {
+    foreignKey: 'followed_id'
 })
 
 

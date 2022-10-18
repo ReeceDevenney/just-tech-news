@@ -8,6 +8,12 @@ class User extends Model {
   checkPassword(loginPw) {
     return bcrypt.compareSync(loginPw, this.password);
   }
+  static follow(body, models) {
+    return models.Follower.create({
+      follower_id: body.follower_id,
+      followed_id: body.followed_id
+    })
+  }
 }
 
 // define table columns and configuration

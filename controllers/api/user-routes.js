@@ -1,6 +1,25 @@
 const router = require('express').Router();
-const { User, Post, Vote, Comment } = require("../../models");
+const { User, Post, Vote, Comment, } = require("../../models");
 const withAuth = require('../../utils/auth');
+const Follower = require('../../models/Follower')
+
+
+router.put('/follow', (req, res) => {
+    // pass session id along with all destructured properties on req.body
+    User.follow({ ...req.body }, { Follower, User })
+      .then(updatedVoteData => res.json(updatedVoteData))
+      .catch(err => {
+        console.log(err);
+        res.status(500).json(err);
+      });
+  
+});
+
+
+
+
+
+
 
 
 // GET /api/users
@@ -167,6 +186,8 @@ router.delete('/:id', withAuth, (req, res) => {
             res.status(500).json(err);
         });
 });
+
+
 
 
 module.exports = router;
